@@ -7,7 +7,7 @@ const port = 4000;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public"    )));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Set EJS as the templating engine
 app.set("view engine", "ejs");
@@ -22,10 +22,26 @@ app.get("/", (req, res) => {
 
 // Route: Add Task
 app.post("/add", (req, res) => {
-    const task = req.body.task;
+    const task = req.body.task.trim();
     if (task) {
-        tasks.push({ id: Date.now(), text: task });
+        tasks.push({ id: Date.now(), text: task, completed: false });
     }
+    res.redirect("/");
+});
+
+// Route: 
+app.post("/complete/:id", (req, res) => {
+    tasks = tasks.map(task =>
+        task.id === Number(req.params.id) ? {task, completed: true } : task
+    );
+    res.redirect("/");
+});
+
+// Route: Undo Completed Task
+app.post("/undo/:id", (req, res) => {
+    tasks = tasks.map(task =>
+        task.id === Number(req.params.id) ? {task, completed: false } : task
+    );
     res.redirect("/");
 });
 
