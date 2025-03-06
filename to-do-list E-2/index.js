@@ -1,57 +1,49 @@
 const express = require("express");
 const path = require("path");
-const bodyParser = require("body-parser");
 
 const app = express();
 const port = 4000;
 
-// Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
-
-// Set EJS as the templating engine
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-
 let tasks = [];
 
-// Route: Show To-Do List
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.urlencoded({ extended: true }));
+
 app.get("/", (req, res) => {
     res.render("index", { tasks });
 });
 
-// Route: Add Task
-app.post("/add", (req, res) => {
-    const task = req.body.task.trim();
+// Add Task (Always added to "Current")
+app.post("/insertData", (req, res) => {
+    const { task, date } = req.body;
     if (task) {
-        tasks.push({ id: Date.now(), text: task, completed: false });
+        tasks.push({ task, date, status: "Current" });
     }
     res.redirect("/");
 });
 
-// Route: 
-app.post("/complete/:id", (req, res) => {
-    tasks = tasks.map(task =>
-        task.id === Number(req.params.id) ? {task, completed: true } : task
-    );
+// Delete Task
+app.get("/delete", (req, res) => {
+    tasks.splice(req.query.index, 1);
     res.redirect("/");
 });
 
-// Route: Undo Completed Task
-app.post("/undo/:id", (req, res) => {
-    tasks = tasks.map(task =>
-        task.id === Number(req.params.id) ? {task, completed: false } : task
-    );
+// Move Task to Completed
+app.get("/complete", (req, res) => {
+    const index = req.query.index;
+    if (tasks[index] && tasks[index].status === "Current") {
+        tasks[index].status = "Completed";
+    }
     res.redirect("/");
 });
 
-// Route: Delete Task
-app.post("/delete/:id", (req, res) => {
-    tasks = tasks.filter(task => task.id !== Number(req.params.id));
+app.get("/moveToCurrent", (req, res) => {
+    const index = req.query.index;
+    if (tasks[index] && tasks[index].status === "Completed") {
+        tasks[index].status = "Current";
+    }
     res.redirect("/");
 });
 
-// Start Server
-app.listen(port, () => {
-    console.log(`✅ Server running on http://localhost:${port}`);
-});
+app.listen(port, () => console.log(`Server running on port ${port}`));
