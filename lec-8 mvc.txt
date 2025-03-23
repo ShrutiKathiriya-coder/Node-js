@@ -1,0 +1,196 @@
+main index file
+
+
+const express = require('express');
+const db = require('./config/db');
+
+const app = express();
+const port = 8000;
+
+app.set('view engine', 'ejs');
+
+app.use('/', require('./routes'));
+app.use(express.urlencoded({ extended: true }));
+
+app.listen(port, (err) => {
+    if (err) {
+        console.log("Server is not started...", err);
+        return false;
+    }
+    console.log("Server is started..");
+});
+
+...................................................................................
+
+views folder 1) post.ejs
+
+
+<h1>This is Post Page</h1>
+
+<a href="/">Post</a> || <a href="/about">About</a> || <a href="/contact">Contact</a>
+
+2)employee.ejs
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Employee</title>
+</head>
+
+<body>
+    <h1 style="text-align: center;">Employee Page</h1>
+
+    <form method="post" action="/employee/addEMP">
+        <table align="center" border="1">
+            <tr>
+                <td>Name</td>
+                <td><input type="text" name="name" placeholder="enter name"></td>
+            </tr>
+            <tr>
+                <td>Password</td>
+                <td><input type="password" name="password" placeholder="enter password"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" name="submit" value="Add EMP"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+
+</html>
+
+
+3)contact.ejs
+
+
+<h1>This is Contact Page</h1>
+
+<a href="/">Post</a> || <a href="/about">About</a> || <a href="/contact">Contact</a>
+
+4)about.ejs
+
+
+<h1>This is About Page</h1>
+
+<a href="/">Post</a> || <a href="/about">About</a> || <a href="/contact">Contact</a
+................................................................................................................
+
+routes  index.js
+
+
+const express = require('express');
+
+const route = express.Router();
+
+console.log("Routing");
+
+const postCTR = require('../controllers/postController');
+
+route.get('/', postCTR.postPage);
+route.get('/about', postCTR.aboutPage);
+route.get('/contact', postCTR.contactPage);
+
+route.use('/employee', require('./employee'));
+
+module.exports = route;
+
+2)employee.js
+
+
+const express = require('express');
+
+const route = express.Router();
+
+const empCTR = require('../controllers/empController');
+
+route.get('/', empCTR.empPage);
+
+route.post('/addEMP', empCTR.insertEMP);
+
+module.exports = route;
+......................................................................
+
+models  employeemodel.js
+
+const mongoose = require('mongoose');
+
+const empSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true,
+    }
+});
+
+const emp = mongoose.model('Employees', empSchema);
+
+module.exports = emp;
+..........................................................................
+
+controllers  postcontrollers.js
+
+
+// module.exports.postPage = (req, res) => {
+//     res.render('post');
+// }
+
+const postPage = (req, res) => {
+    res.render('post');
+}
+
+const aboutPage = (req, res) => {
+    res.render('about');
+}
+
+const contactPage = (req, res) => {
+    res.render('contact');
+}
+
+module.exports = {
+    postPage,
+    aboutPage,
+    contactPage
+}
+
+2)empcontrollers.js
+
+
+module.exports.empPage = (req, res) => {
+    res.render('employee')
+}
+
+module.exports.insertEMP = (req, res) => {
+    console.log(req.body);
+}
+
+.......................................................................
+
+config  db.js
+
+
+const mongoose = require('mongoose');
+
+const URI = "mongodb://localhost:27017/CRUD-EMP";
+
+mongoose.connect(URI);
+
+const db = mongoose.connection
+
+db.on('connected', () => {
+    console.log("Database is conntected...");
+})
+db.on('error', (err) => {
+    console.log("Database is not conntected...", err);
+})
+db.on('disconnected', () => {
+    console.log("Database is Disconntected...");
+})
+
+module.exports = db;
+ 

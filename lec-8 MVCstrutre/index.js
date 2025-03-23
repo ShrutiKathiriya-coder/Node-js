@@ -2,16 +2,20 @@
 //      v=views -> UI design genrate,
 //      c=controls -> view + model -> handling
 
-const express=require('express');
-const 
+const express = require('express');
+const  db=require('./config/db')
 
+const app = express();
+const port = 8000;
 
+app.set('view engine', 'ejs');
 
-const route=express.Router();
-const app=express();
-const port=9000;
-
-app.listen(port),()=>{
-    console.log("server is started😁");
-    
-}
+app.use('/', require('./routes'));
+app.use(express.urlencoded({ extended: true }));
+app.listen(port, (err) => {
+    if (err) {
+        console.log("Server is not started...", err);
+        return false;
+    }
+    console.log("Server is started..😎");
+});
