@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add New Jewelry</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f5f1;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    h2 {
+      text-align: center;
+      color: #b58e5f;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      background-color: #b58e5f;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #a2794c;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Add New Jewelry</h2>
+  <form action="/add" method="post">
+  
+    <label for="metal">jwelleryname</label>
+    <input type="text" id="jwelleryname" name="jwelleryname" placeholder="enter your jwelleryname" required>
+
+    <label for="gemstone">designname</label>
+    <input type="text" id="designname" name="designname" placeholder=" enter your designname">
+
+    <label for="price">Price ($)</label>
+    <input type="number" id="price" name="price" required>
+
+    <label for="type">Type</label>
+    <select id="type" name="type">
+      <option value="ring">Ring</option>
+      <option value="necklace">Necklace</option>
+      <option value="bracelet">Bracelet</option>
+      <option value="earrings">Earrings</option>
+    </select>
+    
+    <label for="colors">colors</label>
+    <input type="text" id="colors" name="colors" placeholder=" enter your colors">
+
+    <button type="submit">Add Jewelry</button>
+  </form>
+</div>
+
+</body>
+</html>
