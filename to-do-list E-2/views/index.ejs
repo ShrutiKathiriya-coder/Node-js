@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO do list</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .task-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .task-section {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #007bff;
+            color: white;
+        }
+        .delete-btn, .move-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+        .delete-btn:hover {
+            background: #c82333;
+        }
+        .move-btn {
+            background: #17a2b8;
+            color: white;
+        }
+        .move-btn:hover {
+            background: #138496;
+        }
+    </style>
+</head>
+<body>
+    <h1>TO DO LIST</h1>
+    <div class="container">
+
+        <form class="task-form" method="post" action="/insertData">
+            <input type="text" name="task" placeholder="Enter Task" required>
+            <input type="date" name="date" required>
+            <button type="submit">Add Task</button>
+        </form>
+
+        <!-- Current Tasks -->
+        <div class="task-section">
+            <h3>Current Tasks</h3>
+            <table>
+                <tr><th>Task</th><th>Date</th><th>Actions</th></tr>
+                <% tasks.filter(t => t.status === "Current").forEach((t, i) => { %>
+                    <tr>
+                        <td><%= t.task %></td>
+                        <td><%= t.date %></td>
+                        <td>
+                            <a class="move-btn" href="/complete?index=<%= i %>">Complete</a>
+                            <a class="delete-btn" href="/delete?index=<%= i %>">Delete</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+
+        <!-- Completed Tasks -->
+        <div class="task-section">
+            <h3>Completed Tasks</h3>
+            <table>
+                <tr><th>Task</th><th>Date</th><th>Actions</th></tr>
+                <% tasks.filter(t => t.status === "Completed").forEach((t, i) => { %>
+                    <tr>
+                        <td><%= t.task %></td>
+                        <td><%= t.date %></td>
+                        <td>
+                            <a class="move-btn" href="/moveToCurrent?index=<%= i %>">Move to Current</a>
+                            <a class="delete-btn" href="/delete?index=<%= i %>">Delete</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

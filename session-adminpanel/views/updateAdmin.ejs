@@ -1,0 +1,172 @@
+<%- include('header') %>
+
+<style>
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .form-control,
+    .form-check-input,
+    .form-select {
+        border-radius: 0.375rem;
+    }
+
+    .custom-file-label {
+        margin-top: 8px;
+    }
+
+    .form-check-label {
+        margin-left: 8px;
+    }
+
+    .form-check {
+        margin-bottom: 10px;
+    }
+
+    img.preview-img {
+        margin-top: 10px;
+        max-height: 100px;
+        border-radius: 5px;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+
+    .breadcrumb {
+        background: none;
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="page-breadcrumb">
+        <div class="row">
+            <div class="col-12 d-flex no-block align-items-center">
+                <h4 class="page-title">Update Admin</h4>
+                <div class="ms-auto text-end">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Library</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card p-4 shadow-sm">
+                    <form class="form-horizontal" method="post" action="/editAdmin/<%= data.id %>" enctype="multipart/form-data">
+                        <h4 class="card-title">Edit Admin</h4>
+
+                        <!-- First Name -->
+                        <div class="mb-3 row">
+                            <label for="fname" class="col-sm-3 col-form-label text-end">First Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="fname" name="fname" value="<%= data.fname%>" placeholder="First Name Here" required>
+                            </div>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="mb-3 row">
+                            <label for="lname" class="col-sm-3 col-form-label text-end">Last Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="lname" name="lname" value="<%= data.lname%>" placeholder="Last Name Here" required>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3 row">
+                            <label for="email" class="col-sm-3 col-form-label text-end">Email</label>
+                            <div class="col-sm-9">
+                                <input type="email" class="form-control" id="email" name="email" value="<%= data.email%>" placeholder="Email Here" required>
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3 row">
+                            <label for="password" class="col-sm-3 col-form-label text-end">Password</label>
+                            <div class="col-sm-9">
+                                <input type="password" class="form-control" id="password" name="password" value="<%= data.password%>" placeholder="Password Here" required>
+                            </div>
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="mb-3 row">
+                            <label class="col-sm-3 col-form-label text-end">Gender</label>
+                            <div class="col-sm-9 d-flex align-items-center gap-3">
+                                <% ['Male', 'Female', 'Other'].forEach((g, i) => { %>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" id="gender<%= i %>" name="gender" value="<%= g %>" <% if(data.gender === g) { %> checked <% } %>>
+                                        <label class="form-check-label" for="gender<%= i %>"><%= g %></label>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+
+                        <!-- Hobby -->
+                        <div class="mb-3 row">
+                            <label class="col-sm-3 col-form-label text-end">Hobby</label>
+                            <div class="col-sm-9">
+                                <% let myHobby = ['Reading', 'Coding', 'Gaming']; %>
+                                <% myHobby.forEach((item, i) => { %>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="hobby<%= i %>" name="hobby" value="<%= item %>" <% if(data.hobby.includes(item)) { %> checked <% } %>>
+                                        <label class="form-check-label" for="hobby<%= i %>"><%= item %></label>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+
+                        <!-- City -->
+                        <div class="mb-3 row">
+                            <label class="col-sm-3 col-form-label text-end">City</label>
+                            <div class="col-sm-9">
+                                <select class="form-select" name="city" required>
+                                    <option value="">Select</option>
+                                    <% ['Surat', 'vapi', 'bharuch', 'Mumbai'].forEach((item) => { %>
+                                        <option value="<%= item %>" <% if(data.city === item) { %> selected <% } %>><%= item %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3 row">
+                            <label class="col-sm-3 col-form-label text-end">Message</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" name="desc" rows="3" placeholder="Write something..."><%= data.desc %></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Avatar -->
+                        <div class="mb-3 row">
+                            <label class="col-sm-3 col-form-label text-end">Image</label>
+                            <div class="col-sm-9">
+                                <input type="file" class="form-control" name="image" id="validatedCustomFile">
+                                <% if (data.image) { %>
+                                    <img src="../<%= data.image %>" class="preview-img" alt="Admin Image">
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="border-top pt-3">
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Edit Admin</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('footer') %>
