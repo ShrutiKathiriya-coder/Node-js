@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const url="mongodb://127.0.0.1:27017/admincrud";
+const url="mongodb://127.0.0.1:27017/session-crud";
 
 mongoose.connect(url);
 const db = mongoose.connection

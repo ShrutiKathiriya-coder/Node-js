@@ -117,7 +117,7 @@
                                 <% myHobby.forEach((item, i) => { %>
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" id="hobby<%= i %>" name="hobby" value="<%= item %>" <% if(data.hobby.includes(item)) { %> checked <% } %>>
-                                        <label class="form-check-label" for="hobby<%= i %>"><%= item %></label>
+                                        <label class="form-check-label" for="hobby<%= i %>"><%=item %></label>
                                     </div>
                                 <% }) %>
                             </div>
@@ -130,7 +130,7 @@
                                 <select class="form-select" name="city" required>
                                     <option value="">Select</option>
                                     <% ['Surat', 'vapi', 'bharuch', 'Mumbai'].forEach((item) => { %>
-                                        <option value="<%= item %>" <% if(data.city === item) { %> selected <% } %>><%= item %></option>
+                                        <option value="<%= item %>" <% if(data.city === item) { %> selected <% } %>><%=item %></option>
                                     <% }) %>
                                 </select>
                             </div>

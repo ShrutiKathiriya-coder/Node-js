@@ -1,5 +1,8 @@
 const express = require('express');
 const multer = require('multer');
+const path = require('path');
+const passport = require("passport");
+
 const route = express.Router();
 
 const storage = multer.diskStorage({
@@ -18,17 +21,17 @@ const upload = multer({ storage: storage }); //mildelwere
 
 console.log("routing");
 
-const { loginPage, userChecked, lostPassword, otpverifypage, checkEmail, checkotp, logout, dashboard, newsetpassword, AdminData, insertadmindata, deleteAdmin, viewAdmin, updateAdmin, editAdmin, viewProfile, changepassword, changemypassword ,checkPassword} = require('../controllers/admincontroller');
+const { loginPage, userChecked, lostPassword, otpverifypage, checkEmail, checkotp, editProfile,logout, dashboard, newsetpassword, AdminData, insertadmindata, deleteAdmin, viewAdmin, updateAdmin, editAdmin, viewProfile, changepassword, changemypassword ,checkPassword} = require('../controllers/admincontroller');
 
 
 //login page
- route.get('/', loginPage);
+ route.get('/', passport.checkLostPasswordAuthentication, loginPage);
 
 
-route.post('/login', userChecked);
+route.post('/login',passport.authenticate("local-auth", { failureRedirect: "/" }), userChecked);
 //lost password
-route.get('/lostPasswordPage', lostPassword);
-route.get('/otpverify', otpverifypage);
+route.get('/lostPasswordPage',passport.checkLostPasswordAuthentication, lostPassword);
+route.get('/otpverify',passport.checkLostPasswordAuthentication, otpverifypage);
 //emailcheck
 route.post('/checkEmail', checkEmail);
 
@@ -40,30 +43,31 @@ route.post('/checkOTP', checkotp);
 route.get('/logout', logout);
 
 //password logic
-route.get('/lostpassword', lostPassword);
+route.get('/lostpassword',passport.checkLostPasswordAuthentication, lostPassword);
 
 //checkNewPassword
 
 route.post('/checkPassword',checkPassword)
 
 //dashboard
-route.get('/dashboard', dashboard)
-route.get('/addAdmin', AdminData)
-route.post('/insertadmin', upload.single('image'), insertadmindata);
-route.get('/deleteAdmin/:id', deleteAdmin);
-route.get('/updateAdmin/:id', upload.single('image'), updateAdmin);
-route.get('/viewAdmin', viewAdmin);
-route.post('/editAdmin/:id', upload.single('image'), editAdmin);
-
+route.get('/dashboard',passport.checkAuthentication,  dashboard)
+route.get('/addAdmin',passport.checkAuthentication,  AdminData)
+route.post('/insertadmin',passport.checkAuthentication,  upload.single('image'), insertadmindata);
+route.get('/deleteAdmin/:id',passport.checkAuthentication,  deleteAdmin);
+route.get('/updateAdmin/:id',passport.checkAuthentication,  upload.single('image'), updateAdmin);
+route.get('/viewAdmin',passport.checkAuthentication,  viewAdmin);
+route.post('/editAdmin/:id',passport.checkAuthentication,  upload.single('image'), editAdmin);
+route.post('/editProfile/:Id', upload.single('image'), editProfile);
 //view profile
-route.get('/viewProfile', viewProfile);
+route.get('/viewProfile', passport.checkAuthentication,viewProfile);
 
 //change password
-route.get('/changepassword', changepassword)
+route.get('/changepassword', passport.checkAuthentication,changepassword)
 
 //newpassword
 
-route.get('/newsetpassword', newsetpassword)
+route.get('/newsetpassword', passport.checkLostPasswordAuthentication,newsetpassword)
+
 //changemypassword
 route.post('/changemypassword', changemypassword)
-module.exports = route;
+module.exports = route,passport;

@@ -61,35 +61,100 @@
         <div class="col-12">
           <div class="card p-3">
             <h5 class="card-title mb-3">Admin Records</h5>
+            <% if(locals.currentAdmin.email=='shrutiikathiriya@gmail.com' ) { %>
 
-            <table class="table table-striped table-bordered">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Email</th>
-
-                  <th>Password</th>
-                  <th>Gender</th>
-                  <th>Hobby</th>
-                  <th>City</th>
-                  <th>Description</th>
-                  <th>Avatar</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (records.length===0) { %>
+              <table class="table table-striped table-bordered">
+                <thead>
                   <tr>
-                    <td colspan="11" class="text-center text-danger">No Records Found</td>
+                    <th>#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Gender</th>
+                    <th>Hobby</th>
+                    <th>City</th>
+                    <th>Description</th>
+                    <th>Avatar</th>
+                    <th>Action</th>
                   </tr>
-                  <% } else { %>
-                    <% records.map(function(data, index) { %>
+                </thead>
+                <tbody>
+                  <% if (records.length===0) { %>
+                    <tr>
+                      <td colspan="11" class="text-center text-danger">No Records Found</td>
+                    </tr>
+                    <% } else { %>
+                      <% records.map(function(data, index) { %>
+                        <tr>
+                          <td>
+                            <%= index + 1 %>
+                          </td>
+                          <td>
+                            <%= data.fname %>
+                          </td>
+                          <td>
+                            <%= data.lname %>
+                          </td>
+                          <td>
+                            <%= data.email %>
+                          </td>
+                          <td>
+                            <%= data.password %>
+                          </td>
+                          <td>
+                            <%= data.gender %>
+                          </td>
+                          <td>
+                            <%= data.hobby %>
+                          </td>
+                          <td>
+                            <%= data.city %>
+                          </td>
+                          <td>
+                            <%= data.desc %>
+                          </td>
+                          <td><img src="<%= data.image%>" alt="image"></td>
+                          <td class="action-icons">
+                            <a href="/updateAdmin/<%= data.id %>" title="Edit" style="color: green;">
+                              <i class="mdi mdi-border-color">update</i>
+                            </a>
+                            <a href="/deleteAdmin/<%= data.id %>" title="Delete" style="color: red;">
+                              <i class="mdi mdi-delete">delete</i>
+                            </a>
+                          </td>
+                        </tr>
+
+
+                        <% }); %>
+                          <% } %>
+                </tbody>
+
+              </table>
+              <% }else { %>
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">First Name</th>
+                      <th scope="col">Last Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Gender</th>
+                      <th scope="col">Hobby</th>
+                      <th scope="col">City</th>
+                      <th scope="col">Description</th>
+                      <th scope="col">Avatar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <% records.map((data, index)=> { %>
+
                       <tr>
-                        <td>
-                          <%= index + 1 %>
-                        </td>
+                        <th scope="row">
+                          <%= index+1 %>
+                        </th>
                         <td>
                           <%= data.fname %>
                         </td>
@@ -98,9 +163,6 @@
                         </td>
                         <td>
                           <%= data.email %>
-                        </td>
-                        <td>
-                          <%= data.password %>
                         </td>
                         <td>
                           <%= data.gender %>
@@ -114,21 +176,15 @@
                         <td>
                           <%= data.desc %>
                         </td>
-                        <td><img src="<%= data.image%>" alt="image"></td>
-                        <td class="action-icons">
-                          <a href="/updateAdmin/<%= data.id %>" title="Edit" style="color: green;">
-                            <i class="mdi mdi-border-color">update</i>
-                          </a>
-                          <a href="/deleteAdmin/<%= data.id %>" title="Delete" style="color: red;">
-                            <i class="mdi mdi-delete">delete</i>
-                          </a>
-                        </td>
+                        <td><img src="<%= data.avatar %>" height="100"></td>
                       </tr>
-                      <% }); %>
-                        <% } %>
-              </tbody>
 
-            </table>
+
+                      <% }) %>
+                  </tbody>
+                </table>
+
+                <% }%>
 
           </div>
         </div>

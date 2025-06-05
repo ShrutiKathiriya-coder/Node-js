@@ -1,4 +1,4 @@
-const admin = require('../models/admin');
+const admin = require('../models/admin')
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
@@ -6,57 +6,32 @@ const path = require('path');
 //login page
 
 const loginPage = (req, res) => {
-    // res.cookie('admin', "shruti");  
+    res.render('login', {
+    success: req.flash("success"),
+    error: req.flash('error')
+  });
 
-    console.log(req.cookies.admin);
-    if (req.cookies.admin === undefined) {
-        res.render('login');
-    } else {
-        res.redirect('/dashboard')
-    }
 }
 
 //user chaekd
 
 
 const userChecked = async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        const user = await admin.findOne({ email: email });
-
-        if (user) {
-            if (user.password == password) {
-                console.log("Login Successfully...");
-
-                res.cookie('admin', user);
-                res.redirect('/dashboard');
-            } else {
-                console.log("Password not matched");
-
-                res.redirect('/');
-            }
-        } else {
-            console.log("Email not matched");
-            res.redirect('/');
-        }
-    } catch (e) {
-        res.send(`<p> Not Found : ${e} </p>`);
-    }
+  req.flash("success", "Admin Login Successfully...");
     res.redirect('/dashboard');
 }
 
 //lost password
 
-const lostPassword = (req, res) => {
+const lostPassword = async (req, res) => {
     res.render("lostpassword");
 }
 
 //otyverifypage
 
 const otpverifypage = (req, res) => {
-    // const success = req.flash('success');
-    // const error = req.flash('error');
+    const success = req.flash('success');
+    const error = req.flash('error');
     res.render('otpverify');
 
 }
@@ -195,156 +170,148 @@ const checkotp = (req, res) => {
 //log out 
 
 const logout = (req, res) => {
-    res.clearCookie('admin');
-    res.redirect('/')
+    req.session.destroy(err => {
+    if (err) {
+      console.log(err);
+      return false;
+    }
+    res.redirect("/");
+  });
 }
 
 
 //dashboard
 const dashboard = (req, res) => {
-    if (req.cookies.admin == undefined) {
-        res.redirect('/');
-    } else {
-        const currentAdmin = req.cookies.admin;
-        console.log(currentAdmin);
-
-        res.render('dashboard', { currentAdmin });
-    }
+    const currentAdmin = req.user;
+    // console.log(currentAdmin);
+    res.render('dashboard', { currentAdmin ,success: req.flash('success'), error: req.flash('error') });
 }
 
 const AdminData = (req, res) => {
-    res.render('addAdmin');
+    res.render("addadmin", {
+    success: req.flash('success'),
+    error: req.flash('error')
+  });
 
 }
 const insertadmindata = async (req, res) => {
     console.log(req.body);
     console.log(req.file);
     try {
-        req.body.image = req.file.path;
+    req.body.image = req.file?.path;
+    const insert = await admin.create(req.body);
 
-        const insert = await admin.create(req.body);
-
-        if (insert) {
-            console.log("Admin Data is Inserted...");
-        } else {
-            console.log("Admin Data is not insertion...");
-        }
-        res.redirect('/addAdmin');
-    } catch (e) {
-        res.send(`<p> Not Found : ${e} </p>`);
+    if (insert) {
+      req.flash('success', "New Admin Inserted...");
+    } else {
+      req.flash('error', "Insertion Failed...");
     }
+    res.redirect("/addadmin");
+  } catch (e) {
+    req.flash('error', `Something went wrong.`);
+    res.send(`<h2> not found : ${error} </h2>`);
+  }
 }
 const deleteAdmin = async (req, res) => {
     const id = req.params.id;
 
     try {
-
-        const data = await admin.findById(id);
-        console.log(data);
-
-
-        if (data) {
-            console.log(data.image);
-            fs.unlinkSync(data.image);
-            await admin.findByIdAndDelete(id);
-
-            res.redirect('/viewAdmin');
-        } else {
-            console.log("Single Record not found....");
-
-        }
-    } catch (e) {
-        res.send(`<p> Not Found : ${e} </p>`);
-    }
+    const data = await admin.findById(req.params.id);
+    if (data) {
+      if (data.adminImage && fs.existsSync(data.image)) {
+        fs.unlinkSync(data.image);
+      }
+      await admin.findByIdAndDelete(req.params.id);
+      req.flash('success', 'Admin deleted successfully.');
+      res.redirect('/viewadmin');
+    } 
+  } catch (e) {
+    req.flash('error', `Error: ${e.message}`);
+    res.redirect('/viewadmin');
+  }
 
 }
 const updateAdmin = async (req, res) => {
     console.log("Controller is running..."); 
     
     const id = req.params.id;
-
     console.log("Id", id);
     
-
     try {
         const data = await admin.findById(id);
 
         if (data) {
-            res.render('updateAdmin', { data });
+            res.render('updateAdmin', { 
+                data,
+                success: req.flash('success'),  
+                error: req.flash('error')       
+            });
         } else {
             console.log("Single Record not found...");
+            req.flash('error', 'Admin not found');
             res.redirect('/viewAdmin');
         }
     } catch (e) {
         res.send(`<p> Not Found : ${e} </p>`);
     }
-}
+};
+
 const viewAdmin = async (req, res) => {
     try {
-        let records = await admin.find({});
-        const currentAdmin = req.cookies.admin;
-
-        records = records.filter((data) => data.id != currentAdmin._id);
-        
-        res.render('viewAdmin', { records, currentAdmin });
-    } catch (error) {
-        console.error("Error fetching admin records:", error);
-        res.send(" Error");
-    }
+      const currentAdmin = req.user;
+    let records = await admin.find({});
+    records = records.filter((data) =>
+                data.id != currentAdmin._id
+            );
+    res.render("viewadmin", {
+      records,
+      success: req.flash('success'),
+      error: req.flash('error')
+    });
+  } catch (e) {
+    req.flash('error', `Error: ${e.message}`);
+    res.redirect('/dashboard');
+  }
 };
 
 const editAdmin = async (req, res) => {
-    const id = req.params.id;
-
-    const data = await admin.findById(id);
 
     try {
-        if (req.file) {
-            fs.unlinkSync(data.image);
-            req.body.image = req.file.path;
-        } else {
-            req.body.image = data.image;
+    const id = req.params.id;
+    const data = await admin.findById(id);
+    if (data) {
+      if (req.file) {
+        if (data.image && fs.existsSync(data.image)) {
+          fs.unlinkSync(data.image);
         }
-         try {
-               const updateddata= await admin.findByIdAndUpdate(id, req.body);
-               if(updateddata){
-                res.redirect('/viewAdmin')
-               }
-               else{
-                res.redirect('back');
-               }
-            } catch (e) {
-                res.send(`<p> Not Found : ${e} </p>`);
-            }
-
-    } catch (e) {
-        res.send(`<p> Not Found : ${e} </p>`);
+        req.body.image = req.file.path;
+      }
+      await adminDetails.findByIdAndUpdate(id, req.body, { new: true });
+      req.flash('success', "Admin Updated Successfully");
+      res.redirect("/viewadmin");
+    } else {
+      req.flash('error', "Admin not found.");
+      res.redirect("/viewadmin");
     }
+  } catch (e) {
+    req.flash('error', `Error: ${e.message}`);
+    res.redirect("/viewadmin");
+  }
 }
 
 //view profile
 
 const viewProfile = (req, res) => {
-    try {
-        const currentAdmin = req.cookies.admin;
-        if (currentAdmin != undefined) {
-            res.render('viewProfile', { currentAdmin });
-        } else {
-            res.redirect('/');
-        }
-    } catch (error) {
-        res.send(`<h2> Not found : ${error} </h2>`);
-    }
+ const currentAdmin = req.user;
+    res.render("viewProfile", { currentAdmin, success: "", error: "" });
 }
 //changepassword
 const changepassword = (req, res) => {
     try {
-        const currentAdmin = req.cookies.admin;
-        if (currentAdmin != undefined) {
-            res.render('changepassword', { currentAdmin });
-        } else {
-            res.redirect('/');
-        }
+        const currentAdmin = req.user;
+        const success = req.flash('success');
+        const error = req.flash('error');
+            res.render('changepassword', { currentAdmin , success ,error });
     } catch (error) {
         res.send(`<h4> Not found : ${error} </h4>`);
     }
@@ -356,7 +323,7 @@ const changemypassword = async (req, res) => {
     console.log(req.body);
     try {
         const { currentPassword, newPassword, confirmPassword } = req.body;
-        const adminData = req.cookies.admin;
+        const adminData = req.user;
 
         if (currentPassword === adminData.password) {
             if (newPassword !== adminData.password) {
@@ -367,7 +334,6 @@ const changemypassword = async (req, res) => {
                         const isUpdate = await admin.findByIdAndUpdate(adminData._id, { password: newPassword });
                         if (isUpdate) {
                             console.log("Password updated...", isUpdate);
-                            res.clearCookie('admin');
                             res.redirect('/');
                         } else {
                             console.log("Password not updated");
@@ -405,7 +371,7 @@ const checkPassword = async (req, res) => {
     console.log(req.body);
 
     try {
-        if (req.body.newPassword == req.body.conformPassword) {
+        if (req.body.newPassword == req.body.confirmPassword) {
             const email = req.cookies.email;
 
             const data = await admin.findOne({ email: email });
@@ -436,6 +402,24 @@ const checkPassword = async (req, res) => {
         res.send(`Not Found : ${e}`);
     }
 }
+const editProfile = async (req, res) => {
+    const updateId = req.query.id;
+
+    try {
+        const data = await admin.findById(updateId);
+        const currentAdmin = req.user;
+
+        if (data) {
+            res.render('editprofile', { data, currentAdmin ,success: "", error: "" });
+        } else {
+            console.log("Single Record not found...");
+
+        }
+    } catch (e) {
+
+        res.send(`<p> Not Found : ${e} </p>`);
+    }
+}
 module.exports = {
     loginPage,
     userChecked,
@@ -444,6 +428,7 @@ module.exports = {
     otpverifypage,
     checkEmail,
     checkotp,
+    editProfile,
     dashboard,
     AdminData,
     insertadmindata,
