@@ -8,7 +8,7 @@ passport.use('local-auth', new localStrategy({
 }, async function (email, password, done) {
     console.log(`email : ${email} , password : ${password}`);
 
-    const adminData = await admin.findOne({ email: email }); // null
+    const adminData = await admin.findOne({ email: email }); 
 
     if (adminData) {
         if (adminData.password == password) {

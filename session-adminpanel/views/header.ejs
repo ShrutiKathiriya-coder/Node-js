@@ -49,7 +49,7 @@
   <nav class="pc-sidebar">
     <div class="navbar-wrapper">
       <div class="m-header">
-        <a href="../dashboard/index.html" class="b-brand text-primary">
+        <a href="#" class="b-brand text-primary">
           <!-- ========   Change your logo from here   ============ -->
           <img src="../assets/images/logo-dark.svg" class="img-fluid logo-lg" alt="logo">
         </a>
@@ -72,12 +72,12 @@
                 <a href="/viewAdmin" class="pc-link">viewAdmin<span class="pc-arrow">
               </li>
             </ul>
-          </li>
           <li class="pc-item">
             <a href="/viewprofile" class="pc-link">
               <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
               <span class="pc-mtext">profile</span>
             </a>
+          </li>
           </li>
 
       </div>
@@ -185,13 +185,13 @@
           <li class="dropdown pc-h-item header-user-profile">
             <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button"
               aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
-              <span>👧 shruti kathiriya</span>
+              <span>👧 <%=currentAdmin.fname + currentAdmin.lname%></span>
             </a>
             <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
               <div class="dropdown-header">
                 <div class="d-flex mb-1">
                   <div class="flex-grow-1 ms-3">
-                    <h6 class="mb-1"> 🤷‍♀️ <%=currentAdmin.name%></h6>
+                    <h6 class="mb-1"> 🤷‍♀️ <%=currentAdmin.fname+currentAdmin.lname%></h6>
                     <span>full-stack devloper</span>
                   </div>
                   <a href="/logout" class="pc-head-link bg-transparent"><i class="ti ti-power text-danger"></i></a>

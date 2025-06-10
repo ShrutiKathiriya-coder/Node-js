@@ -50,8 +50,6 @@ const checkEmail = async (req, res) => {
 
     if (data) {
         const transporter = nodemailer.createTransport({
-            host: "smtp.ethereal.email",
-            port: 587,
             service: "gmail",
             secure: false,
             auth: {
@@ -159,10 +157,10 @@ const checkotp = (req, res) => {
     console.log(req.cookies.OTP);
 
 
-    if (req.body.OTP == req.cookies.OTP) {
+    if (req.body.otp == req.cookies.OTP) {
         res.redirect('/newsetpassword');
     } else {
-        res.redirect('/newsetpassword');
+        res.redirect('/otpverify');
         console.log("OTP has not matched...");
     }
 }
@@ -218,7 +216,7 @@ const deleteAdmin = async (req, res) => {
     try {
     const data = await admin.findById(req.params.id);
     if (data) {
-      if (data.adminImage && fs.existsSync(data.image)) {
+      if (data.image && fs.existsSync(data.image)) {
         fs.unlinkSync(data.image);
       }
       await admin.findByIdAndDelete(req.params.id);
@@ -259,8 +257,8 @@ const updateAdmin = async (req, res) => {
 const viewAdmin = async (req, res) => {
     try {
       const currentAdmin = req.user;
-    let records = await admin.find({});
-    records = records.filter((data) =>
+      let records = await admin.find({});
+      records = records.filter((data) =>
                 data.id != currentAdmin._id
             );
     res.render("viewadmin", {
@@ -275,29 +273,39 @@ const viewAdmin = async (req, res) => {
 };
 
 const editAdmin = async (req, res) => {
-
     try {
-    const id = req.params.id;
-    const data = await admin.findById(id);
-    if (data) {
-      if (req.file) {
-        if (data.image && fs.existsSync(data.image)) {
-          fs.unlinkSync(data.image);
+        const id = req.params.id;
+        const data = await admin.findById(id); // get old record
+
+        if (data) {
+            if (req.file) {
+                // Delete old image if it exists
+                if (data.image && fs.existsSync(data.image)) {
+                    fs.unlinkSync(data.image);
+                    console.log("Old image deleted:", data.image);
+                }
+
+                req.body.image = req.file.path; // Save new image path
+            } else {
+                req.body.image = data.image; // Keep old image if no new uploaded
+            }
+
+            // Update record with new data
+            await admin.findByIdAndUpdate(id, req.body, { new: true });
+
+            req.flash('success', "Admin Updated Successfully");
+            res.redirect("/viewadmin");
+        } else {
+            req.flash('error', "Admin not found.");
+            res.redirect("/viewadmin");
         }
-        req.body.image = req.file.path;
-      }
-      await adminDetails.findByIdAndUpdate(id, req.body, { new: true });
-      req.flash('success', "Admin Updated Successfully");
-      res.redirect("/viewadmin");
-    } else {
-      req.flash('error', "Admin not found.");
-      res.redirect("/viewadmin");
+    } catch (e) {
+        console.error("Update error:", e.message);
+        req.flash('error', `Error: ${e.message}`);
+        res.redirect("/viewadmin");
     }
-  } catch (e) {
-    req.flash('error', `Error: ${e.message}`);
-    res.redirect("/viewadmin");
-  }
-}
+};
+
 
 //view profile
 
@@ -403,14 +411,14 @@ const checkPassword = async (req, res) => {
     }
 }
 const editProfile = async (req, res) => {
-    const updateId = req.query.id;
+    const updateId = req.params.id;
 
     try {
         const data = await admin.findById(updateId);
         const currentAdmin = req.user;
 
         if (data) {
-            res.render('editprofile', { data, currentAdmin ,success: "", error: "" });
+            res.render('editProfile', { data, currentAdmin ,success: "", error: "" });
         } else {
             console.log("Single Record not found...");
 

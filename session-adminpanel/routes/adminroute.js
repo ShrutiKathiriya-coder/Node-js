@@ -57,7 +57,8 @@ route.get('/deleteAdmin/:id',passport.checkAuthentication,  deleteAdmin);
 route.get('/updateAdmin/:id',passport.checkAuthentication,  upload.single('image'), updateAdmin);
 route.get('/viewAdmin',passport.checkAuthentication,  viewAdmin);
 route.post('/editAdmin/:id',passport.checkAuthentication,  upload.single('image'), editAdmin);
-route.post('/editProfile/:Id', upload.single('image'), editProfile);
+route.get('/editProfile/:id', editProfile);
+route.post('/editProfile/:id', upload.single('image'), editAdmin);
 //view profile
 route.get('/viewProfile', passport.checkAuthentication,viewProfile);
 
