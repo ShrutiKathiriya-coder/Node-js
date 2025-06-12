@@ -1,0 +1,170 @@
+<%- include('header') %>
+
+<style>            
+  body {
+    background: linear-gradient(120deg, #2c3e50, #4ca1af);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .centered-form {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .form-wrapper {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    width: 800px;
+        margin-top: 89px;
+        margin-left:224px;
+    /* max-width: 500px; */
+  }
+
+  .card-title {
+    margin-top: 40px;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #34495e;
+  }
+
+  .form-check-label,
+  .col-form-label {
+    color: #2c3e50;
+    font-weight: 500;
+  }
+
+  .btn-primary {
+    background: #4ca1af;
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background: #3b8d99;
+  }
+</style>
+
+<div class="container-fluid centered-form">
+  <div class="form-wrapper">
+    
+    <!-- Form 1 -->
+    <div class="card p-4">
+      <form method="post" action="/insertadmin" enctype="multipart/form-data">
+        <div class="card-body">
+          <h4 class="card-title text-center mb-4">Add New Admin</h4>
+
+          <!-- All Form Fields (Same as Original) -->
+          <!-- FIRST NAME -->
+          <div class="mb-3 row">
+            <label for="fname" class="col-sm-3 col-form-label text-end">First Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="fname" name="fname" placeholder="Enter First Name" required>
+            </div>
+          </div>
+
+          <!-- LAST NAME -->
+          <div class="mb-3 row">
+            <label for="lname" class="col-sm-3 col-form-label text-end">Last Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="lname" name="lname" placeholder="Enter Last Name" required>
+            </div>
+          </div>
+
+          <!-- EMAIL -->
+          <div class="mb-3 row">
+            <label for="email" class="col-sm-3 col-form-label text-end">Email</label>
+            <div class="col-sm-9">
+              <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email" required>
+            </div>
+          </div>
+
+          <!-- PASSWORD -->
+          <div class="mb-3 row">
+            <label for="password" class="col-sm-3 col-form-label text-end">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
+            </div>
+          </div>
+
+          <!-- GENDER -->
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label text-end">Gender</label>
+            <div class="col-sm-9 d-flex gap-3">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="gender" value="Male" required>
+                <label class="form-check-label">Male</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="gender" value="Female" required>
+                <label class="form-check-label">Female</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="gender" value="Other" required>
+                <label class="form-check-label">Other</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- HOBBY -->
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label text-end">Hobby</label>
+            <div class="col-sm-9">
+              <% ['Reading', 'Coding', 'Gaming'].forEach((item, i) => { %>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" name="hobby" id="hobby<%= i %>" value="<%= item %>">
+                  <label class="form-check-label" for="hobby<%= i %>"><%= item %></label>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+
+          <!-- CITY -->
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label text-end">City</label>
+            <div class="col-sm-9">
+              <select class="form-select" name="city" required>
+                <option disabled selected>Select City</option>
+                <% ['Surat', 'vapi', 'bharuch', 'Mumbai'].forEach(city => { %>
+                  <option value="<%= city %>"><%= city %></option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+
+          <!-- MESSAGE -->
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label text-end">Message</label>
+            <div class="col-sm-9">
+              <textarea class="form-control" name="desc" rows="3" placeholder="Write something..."></textarea>
+            </div>
+          </div>
+
+          <!-- IMAGE -->
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label text-end">Image</label>
+            <div class="col-sm-9">
+              <input type="file" class="form-control" name="image" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer text-center">
+          <button type="submit" class="btn btn-primary px-4 py-2">Add Admin</button>
+        </div>
+      </form>
+    </div>
+
+
+  </div>
+</div>
+
+<%- include('footer') %>
